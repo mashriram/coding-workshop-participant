@@ -97,7 +97,7 @@ fi
 # Initialize Terraform with backend configuration
 if [ "$ENVIRONMENT" = "local" ]; then
     echo "INFO: Initializing with LocalStack backend configuration..."
-    rm -rf .terraform
+    rm -rf .terraform .terraform.lock.hcl
     terraform init -reconfigure -upgrade -lock=false \
         -backend-config="bucket=coding-workshop-tfstate-${PARTICIPANT_ID:-abcd1234}" \
         -backend-config="region=${AWS_REGION:-us-east-1}" \
@@ -108,10 +108,12 @@ if [ "$ENVIRONMENT" = "local" ]; then
         -backend-config="use_path_style=true"
 elif [ -n "$PARTICIPANT_ID" ]; then
     echo "INFO: Using custom backend configuration..."
+    rm -rf .terraform .terraform.lock.hcl
     terraform init -reconfigure -upgrade -backend-config="bucket=coding-workshop-tfstate-${PARTICIPANT_ID:-abcd1234}" -backend-config="region=${AWS_REGION:-us-east-1}"
 else
     echo "WARNING: No backend.config found. Using default backend configuration."
     echo "INFO: For multi-participant workshops, run: ./bin/setup-participant.sh"
+    rm -rf .terraform .terraform.lock.hcl
     terraform init -reconfigure -upgrade
 fi
 

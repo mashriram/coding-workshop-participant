@@ -55,7 +55,7 @@ resource "aws_cloudfront_distribution" "this" {
   dynamic "ordered_cache_behavior" {
     for_each = local.function_origins
     content {
-      path_pattern     = "/api/${ordered_cache_behavior.value.name}*"
+      path_pattern     = ordered_cache_behavior.value.name == "api" ? "/api/*" : "/api/${ordered_cache_behavior.value.name}*"
       target_origin_id = ordered_cache_behavior.value.origin_id
 
       allowed_methods        = ["GET", "HEAD", "OPTIONS", "DELETE", "PATCH", "POST", "PUT"]
