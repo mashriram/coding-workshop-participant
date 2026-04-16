@@ -96,11 +96,16 @@ def handle_high_potentials(user):
             rows = cur.fetchall()
         keys = ["employee_id", "employee_name", "department", "job_title", "avg_rating", "avg_goal_progress"]
         # Convert Decimals to float for JSON
+        def safe_float(v):
+            if v is None: return 0.0
+            try: return float(v)
+            except: return 0.0
+
         res = []
         for r in rows:
             d = dict(zip(keys, r))
-            d["avg_rating"] = float(d["avg_rating"])
-            d["avg_goal_progress"] = float(d["avg_goal_progress"])
+            d["avg_rating"] = safe_float(d["avg_rating"])
+            d["avg_goal_progress"] = safe_float(d["avg_goal_progress"])
             res.append(d)
         return response(200, res)
     finally:
@@ -126,10 +131,15 @@ def handle_attrition_risks(user):
             cur.execute(query, args)
             rows = cur.fetchall()
         keys = ["employee_id", "employee_name", "department", "rating", "period", "year"]
+        def safe_float(v):
+            if v is None: return 0.0
+            try: return float(v)
+            except: return 0.0
+
         res = []
         for r in rows:
             d = dict(zip(keys, r))
-            d["rating"] = float(d["rating"]) if d["rating"] else None
+            d["rating"] = safe_float(d["rating"])
             res.append(d)
         return response(200, res)
     finally:
@@ -155,10 +165,15 @@ def handle_skills_distribution(user):
             cur.execute(query, args)
             rows = cur.fetchall()
         keys = ["category", "competency_name", "avg_level", "assessment_count"]
+        def safe_float(v):
+            if v is None: return 0.0
+            try: return float(v)
+            except: return 0.0
+
         res = []
         for r in rows:
             d = dict(zip(keys, r))
-            d["avg_level"] = float(d["avg_level"]) if d["avg_level"] else 0.0
+            d["avg_level"] = safe_float(d["avg_level"])
             res.append(d)
         return response(200, res)
     finally:

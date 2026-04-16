@@ -36,7 +36,7 @@ def init_db():
                 department VARCHAR(255),
                 job_title VARCHAR(255),
                 hire_date DATE,
-                manager_id INTEGER REFERENCES employees(id) ON DELETE SET NULL,
+                manager_id INTEGER,
                 status VARCHAR(50) NOT NULL DEFAULT 'active',
                 phone VARCHAR(50),
                 location VARCHAR(255),
@@ -48,14 +48,14 @@ def init_db():
         cur.execute("SELECT COUNT(*) FROM employees;")
         if cur.fetchone()[0] == 0:
             sample = [
-                ("Alice Johnson", "alice.johnson@acme.com", "Engineering", "Senior Engineer", "2020-03-15", None, "active", "+1-555-0101", "New York"),
-                ("Bob Smith", "bob.smith@acme.com", "Engineering", "Staff Engineer", "2018-07-01", None, "active", "+1-555-0102", "San Francisco"),
-                ("Carol White", "carol.white@acme.com", "Product", "Product Manager", "2019-11-20", None, "active", "+1-555-0103", "Austin"),
-                ("David Brown", "david.brown@acme.com", "HR", "HR Manager", "2017-05-10", None, "active", "+1-555-0104", "Chicago"),
-                ("Eve Davis", "eve.davis@acme.com", "Engineering", "Junior Engineer", "2022-01-15", None, "active", "+1-555-0105", "New York"),
-                ("Frank Miller", "frank.miller@acme.com", "Sales", "Sales Director", "2016-09-01", None, "active", "+1-555-0106", "Boston"),
-                ("Grace Lee", "grace.lee@acme.com", "Marketing", "Marketing Manager", "2021-06-01", None, "active", "+1-555-0107", "Seattle"),
-                ("Henry Wilson", "henry.wilson@acme.com", "Finance", "Finance Analyst", "2020-08-15", None, "active", "+1-555-0108", "New York"),
+                ("Alice Johnson", "alice.johnson@acme.com", "Engineering", "Senior Engineer", "2020-03-15", 3, "active", "+1-555-0101", "New York"),
+                ("Bob Smith", "bob.smith@acme.com", "Engineering", "Staff Engineer", "2018-07-01", 3, "active", "+1-555-0102", "San Francisco"),
+                ("Carol White", "carol.white@acme.com", "Product", "Product Manager", "2019-11-20", 3, "active", "+1-555-0103", "Austin"),
+                ("David Brown", "david.brown@acme.com", "HR", "HR Manager", "2017-05-10", 3, "active", "+1-555-0104", "Chicago"),
+                ("Eve Davis", "eve.davis@acme.com", "Engineering", "Junior Engineer", "2022-01-15", 3, "active", "+1-555-0105", "New York"),
+                ("Frank Miller", "frank.miller@acme.com", "Sales", "Sales Director", "2016-09-01", 1, "active", "+1-555-0106", "Boston"),
+                ("Grace Lee", "grace.lee@acme.com", "Marketing", "Marketing Manager", "2021-06-01", 1, "active", "+1-555-0107", "Seattle"),
+                ("Henry Wilson", "henry.wilson@acme.com", "Finance", "Finance Analyst", "2020-08-15", 1, "active", "+1-555-0108", "New York"),
             ]
             for s in sample:
                 cur.execute("""

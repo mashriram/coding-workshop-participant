@@ -2,13 +2,13 @@ import os
 import sys
 import importlib
 
-# Set environment variables for local DB
-os.environ["POSTGRES_HOST"] = "localhost"
-os.environ["POSTGRES_PORT"] = "5433"
-os.environ["POSTGRES_NAME"] = "postgres"
-os.environ["POSTGRES_USER"] = "postgres"
-os.environ["POSTGRES_PASS"] = "postgres123"
-os.environ["IS_LOCAL"] = "true"
+# Set environment variables for local DB if not already set
+os.environ.setdefault("POSTGRES_HOST", "localhost")
+os.environ.setdefault("POSTGRES_PORT", "5432")
+os.environ.setdefault("POSTGRES_NAME", "postgres")
+os.environ.setdefault("POSTGRES_USER", "postgres")
+os.environ.setdefault("POSTGRES_PASS", "postgres123")
+os.environ.setdefault("IS_LOCAL", "true")
 
 SERVICES = [
     "auth-service",

@@ -51,16 +51,23 @@ def init_db():
                 updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
             );
         """)
-        # Seed default admin if no users exist
-        cur.execute("SELECT COUNT(*) FROM users;")
-        count = cur.fetchone()[0]
-        if count == 0:
-            hashed = bcrypt.hashpw(b"Admin@1234", bcrypt.gensalt()).decode()
-            cur.execute("""
-                INSERT INTO users (name, email, password_hash, role)
-                VALUES (%s, %s, %s, %s)
-            """, ("ACME Admin", "admin@acme.com", hashed, "admin"))
-            logger.info("Seeded default admin user: admin@acme.com / Admin@1234")
+        # Seed default roles
+        users_to_seed = [
+            ("ACME Admin", "admin@acme.com", "Admin@1234", "admin"),
+            ("ACME HR", "hr@acme.com", "HR@1234", "hr"),
+            ("ACME Manager", "manager@acme.com", "Manager@1234", "manager"),
+            ("ACME Employee", "employee@acme.com", "Employee@1234", "employee"),
+        ]
+        for name, email, pwd, role in users_to_seed:
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1 FROM users WHERE email = %s", (email,))
+                if not cur.fetchone():
+                    hashed = bcrypt.hashpw(pwd.encode(), bcrypt.gensalt()).decode()
+                    cur.execute("""
+                        INSERT INTO users (name, email, password_hash, role)
+                        VALUES (%s, %s, %s, %s)
+                    """, (name, email, hashed, role))
+                    logger.info(f"Seeded user: {email}")
         conn.commit()
     release_connection(conn)
 
