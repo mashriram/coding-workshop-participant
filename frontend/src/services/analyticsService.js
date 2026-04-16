@@ -1,4 +1,4 @@
-import { api } from './api';
+import api from './api';
 
 export const analyticsService = {
   getSkillGaps: () => api.get('/analytics-service/skill-gaps'),
