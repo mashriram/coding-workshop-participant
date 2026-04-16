@@ -42,6 +42,17 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" > /dev/null 2>&1 || exit 1; pwd -P)"
 PROJECT_ROOT="$(cd $SCRIPT_DIR/.. > /dev/null 2>&1 || exit 1; pwd -P)"
 PROJECT_NAME="coding-workshop"
 DOMAIN_NAME="codingworkshop.net"
+
+# Source variables from .env if it exists
+if [ -f "$PROJECT_ROOT/.env" ]; then
+    echo "Loading variables from .env..."
+    # Parse without exporting unnecessary quoting
+    export EVENT_ID="${EVENT_ID:-$(grep -i '^Event_ID=' "$PROJECT_ROOT/.env" | cut -d '=' -f2- | sed -e 's/^"//' -e 's/"$//' | xargs)}"
+    export PARTICIPANT_ID="${PARTICIPANT_ID:-$(grep -i '^Participant_ID=' "$PROJECT_ROOT/.env" | cut -d '=' -f2- | sed -e 's/^"//' -e 's/"$//' | xargs)}"
+    export PARTICIPANT_CODE="${PARTICIPANT_CODE:-$(grep -i '^Participant_Code=' "$PROJECT_ROOT/.env" | cut -d '=' -f2- | sed -e 's/^"//' -e 's/"$//' | xargs)}"
+    export AWS_REGION="${AWS_REGION:-$(grep -i '^AWS_Region=' "$PROJECT_ROOT/.env" | cut -d '=' -f2- | sed -e 's/^"//' -e 's/"$//' | xargs)}"
+fi
+
 if [ -z "$EVENT_ID" ]; then EVENT_ID="abcd1234"; fi
 
 # Retrieve DNS TXT record
