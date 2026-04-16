@@ -120,6 +120,27 @@ fi
 if [ "$ENVIRONMENT" != "local" ] && [ -n "$PARTICIPANT_ID" ]; then
     echo "INFO: Explicitly pre-provisioning API CloudWatch Log Group to bypass Terraform strict data block constraints..."
     aws logs create-log-group --log-group-name "/aws/lambda/${PROJECT_NAME:-coding-workshop}-api-${PARTICIPANT_ID}" >/dev/null 2>&1 || true
+
+    echo "INFO: Purging ghost AWS resources left behind by state scrubber..."
+    ROLE_NAME="${PROJECT_NAME:-coding-workshop}-api-${PARTICIPANT_ID}"
+    
+    # Detach and delete all role policies cleanly
+    for inline in $(aws iam list-role-policies --role-name "$ROLE_NAME" --query 'PolicyNames' --output text 2>/dev/null); do
+        if [ "$inline" != "None" ] && [ -n "$inline" ]; then aws iam delete-role-policy --role-name "$ROLE_NAME" --policy-name "$inline" >/dev/null 2>&1 || true; fi
+    done
+    for policy in $(aws iam list-attached-role-policies --role-name "$ROLE_NAME" --query 'AttachedPolicies[*].PolicyArn' --output text 2>/dev/null); do
+        if [ "$policy" != "None" ] && [ -n "$policy" ]; then aws iam detach-role-policy --role-name "$ROLE_NAME" --policy-arn "$policy" >/dev/null 2>&1 || true; fi
+    done
+    
+    # Delete the role
+    aws iam delete-role --role-name "$ROLE_NAME" >/dev/null 2>&1 || true
+    
+    # Delete the managed logs policy
+    ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    aws iam delete-policy --policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/${ROLE_NAME}-logs" >/dev/null 2>&1 || true
+    
+    # Delete the Lambda function
+    aws lambda delete-function --function-name "$ROLE_NAME" >/dev/null 2>&1 || true
 fi
 
 # Apply Terraform configuration automatically
