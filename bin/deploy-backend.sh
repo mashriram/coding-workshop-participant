@@ -120,12 +120,6 @@ fi
 if [ "$ENVIRONMENT" != "local" ] && [ -n "$PARTICIPANT_ID" ]; then
     echo "INFO: Explicitly pre-provisioning API CloudWatch Log Group to bypass Terraform strict data block constraints..."
     aws logs create-log-group --log-group-name "/aws/lambda/${PROJECT_NAME:-coding-workshop}-api-${PARTICIPANT_ID}" >/dev/null 2>&1 || true
-
-    echo "INFO: Scrubbing orphaned monolithic modules from strict state tracking..."
-    terraform state rm 'aws_s3_bucket_website_configuration.this' >/dev/null 2>&1 || true
-    terraform state rm 'aws_s3_bucket_acl.this' >/dev/null 2>&1 || true
-    terraform state rm 'aws_sqs_queue.this' >/dev/null 2>&1 || true
-    terraform state rm 'module.lambda' >/dev/null 2>&1 || true
 fi
 
 # Apply Terraform configuration automatically
