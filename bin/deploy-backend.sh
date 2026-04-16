@@ -117,6 +117,11 @@ else
     terraform init -reconfigure -upgrade
 fi
 
+if [ "$ENVIRONMENT" != "local" ] && [ -n "$PARTICIPANT_ID" ]; then
+    echo "INFO: Scrubbing orphaned monolithic modules from strict state tracking..."
+    terraform state rm 'aws_sqs_queue.this' 'module.lambda' >/dev/null 2>&1 || true
+fi
+
 # Apply Terraform configuration automatically
 terraform apply -auto-approve -lock=false
 echo "INFO: Infrastructure deployment complete!"
