@@ -1,6 +1,6 @@
 output "api_base_url" {
   description = "Base URL for API calls (for frontend REACT_APP_API_URL)"
-  value       = data.aws_caller_identity.this.id == "000000000000" ? "" : try("https://${element(aws_cloudfront_distribution.this.*.domain_name, 0)}", "")
+  value       = data.aws_caller_identity.this.id == "000000000000" ? module.lambda["api"].lambda_function_url : try("https://${element(aws_cloudfront_distribution.this.*.domain_name, 0)}", "")
 }
 
 output "api_endpoints" {

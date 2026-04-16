@@ -24,8 +24,7 @@ locals {
     dirname(file) if !startswith(dirname(file), "_") && !startswith(dirname(file), ".")
   ]
   python_dirs = [
-    for file in fileset(format("%s/../backend", path.module), "*/function.py") :
-    dirname(file) if !startswith(dirname(file), "_") && !startswith(dirname(file), ".")
+    # Replaced by monolithic backend deployment
   ]
   java_names = {
     for name in local.java_dirs : name => {
@@ -53,13 +52,13 @@ locals {
     }
   }
   python_names = {
-    for name in local.python_dirs : name => {
-      name             = name
+    api = {
+      name             = "api"
       arch             = "x86_64"
       runtime          = "python3.11"
-      handler          = "function.handler"
-      path             = abspath(format("%s/../backend/%s", path.module, name))
-      pip_requirements = false
+      handler          = "lambda_handler.handler"
+      path             = abspath(format("%s/../backend", path.module))
+      pip_requirements = true
     }
   }
   function_names = merge(local.java_names, local.nodejs_names, local.python_names)
