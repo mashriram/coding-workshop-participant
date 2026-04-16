@@ -119,10 +119,10 @@ fi
 
 if [ "$ENVIRONMENT" != "local" ] && [ -n "$PARTICIPANT_ID" ]; then
     echo "INFO: Scrubbing orphaned monolithic modules from strict state tracking..."
-    terraform state rm 'aws_s3_bucket_website_configuration.this' || true
-    terraform state rm 'aws_s3_bucket_acl.this' || true
-    terraform state rm 'aws_sqs_queue.this' || true
-    terraform state rm 'module.lambda' || true
+    terraform state rm 'aws_s3_bucket_website_configuration.this' >/dev/null 2>&1 || true
+    terraform state rm 'aws_s3_bucket_acl.this' >/dev/null 2>&1 || true
+    terraform state rm 'aws_sqs_queue.this' >/dev/null 2>&1 || true
+    terraform state rm 'module.lambda' >/dev/null 2>&1 || true
 fi
 
 # Apply Terraform configuration automatically
