@@ -42,8 +42,7 @@ module "lambda" {
   ephemeral_storage_size            = 512
   cloudwatch_logs_retention_in_days = 7
   cloudwatch_logs_skip_destroy      = false
-  create_cloudwatch_log_group       = false
-  use_existing_cloudwatch_log_group = false
+  use_existing_cloudwatch_log_group = true
   trigger_on_package_timestamp      = false
   create_lambda_function_url        = true
   authorization_type                = "NONE"
