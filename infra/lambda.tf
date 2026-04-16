@@ -108,3 +108,12 @@ resource "null_resource" "java_build" {
     command = join(" && ", each.value.mvn_cmd)
   }
 }
+
+resource "aws_lambda_permission" "public_function_url" {
+  for_each       = local.function_names
+  statement_id   = "AllowPublicFunctionURLInvoke"
+  action         = "lambda:InvokeFunctionUrl"
+  function_name  = module.lambda[each.key].lambda_function_name
+  principal      = "*"
+  function_url_auth_type = "NONE"
+}
