@@ -25,6 +25,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def normalize_slashes(request: Request, call_next):
+    # If the path starts with //, collapse it to / to prevent 404s from stubborn client caches
+    path = request.scope.get("path", "")
+    if path.startswith("//"):
+        request.scope["path"] = "/" + path.lstrip("/")
+    return await call_next(request)
+
 # Service Mapping
 SERVICE_MAP = {
     "auth-service": "auth-service",
@@ -126,10 +134,14 @@ async def unified_handler(service_name: str, request: Request, rest_of_path: str
         if not isinstance(resp_payload, str):
             resp_payload = json.dumps(resp_payload)
             
+        # Ensure correct media type to prevent explicit string casting overrides
+        media_type = headers.get("Content-Type", "application/json") if headers else "application/json"
+        
         return Response(
             content=resp_payload,
             status_code=status,
-            headers=headers
+            headers=headers,
+            media_type=media_type
         )
     except Exception as e:
         import traceback

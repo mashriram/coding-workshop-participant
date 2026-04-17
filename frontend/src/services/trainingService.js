@@ -1,5 +1,5 @@
 import api from './api';
-const base = '/training-service';
+const base = '/api/training-service';
 export const trainingService = {
   list: (params) => api.get(base, { params }),
   get: (id) => api.get(`${base}/${id}`),

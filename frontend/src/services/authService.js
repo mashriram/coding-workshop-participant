@@ -1,7 +1,7 @@
 import api from './api';
 
 const ENDPOINTS = JSON.parse(import.meta.env.VITE_API_ENDPOINTS || '{}');
-const base = (ENDPOINTS['auth-service'] ? '' : '') + '/auth-service';
+const base = (ENDPOINTS['auth-service'] ? ENDPOINTS['auth-service'] : '') + '/api/auth-service';
 
 export const authService = {
   login: (data) => api.post(`${base}/login`, data),
